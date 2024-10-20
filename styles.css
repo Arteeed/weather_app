@@ -82,7 +82,7 @@ body {
         margin-bottom: 10px;
     }
 }
-/* .mapStyle {
+.mapStyle {
     display: flex;
     justify-content: center;
 }
@@ -90,4 +90,4 @@ body {
 #map {
     height: 400px;
     width: 500px;  
-} */
+}
