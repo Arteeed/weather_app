@@ -16,39 +16,18 @@ function showPosition(position) {
     const lon = position.coords.longitude;
     x.innerHTML = `Latitude: ${lat} <br>Longitude: ${lon}`;
 
-    // Get the nearest city using reverse geocoding and then fetch weather data
-    getCityAndWeather(lat, lon);
+    // Fetch weather data and city name based on exact location
+    getWeatherData(lat, lon);
 
-    //WITH MAP
-        // var map = L.map('map').setView([lat, lon], 13);  // Coordinates of London (51.505, -0.09)
-    
-        //     // Step 3: Add a tile layer (this provides the visual tiles of the map)
-        //     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        //         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        //     }).addTo(map);
-    
-        //     // Step 4: Add a marker to the specified location
-        //     var marker = L.marker([lat, lon]).addTo(map);
-    
-        //     // Optional: Add popup to the marker
-        //     marker.bindPopup("<b>You are Here!</b><br>current location.").openPopup();
-    
-}
+    // WITH MAP
+    var map = L.map('map').setView([lat, lon], 13); // Set map to user's coordinates
 
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
 
-async function getCityAndWeather(lat, lon) {
-    try {
-        // Reverse geocoding to get city name from latitude and longitude
-        const geoResponse = await fetch(`http://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${apikey}`);
-        const geoData = await geoResponse.json();
-        const city = geoData[0].name;
-        locationEl.textContent = `Location: ${city}`;
-
-        // Fetch weather data for the location
-        getWeatherData(lat, lon);
-    } catch (error) {
-        locationEl.textContent = "Could not retrieve location.";
-    }
+    var marker = L.marker([lat, lon]).addTo(map);
+    marker.bindPopup("<b>You are Here!</b><br>Current location.").openPopup();
 }
 
 async function getWeatherData(lat, lon) {
@@ -61,6 +40,9 @@ async function getWeatherData(lat, lon) {
 
         const data = await response.json();
         console.log(data);
+
+        const city = data.name;  // Get city name from the weather data
+        locationEl.textContent = `Location: ${city}`;  // Display city name
 
         const temperature = Math.round(data.main.temp);
         const description = data.weather[0].description;
@@ -80,7 +62,7 @@ async function getWeatherData(lat, lon) {
     } catch (error) {
         weatherDataEl.querySelector(".icon").innerHTML = "";
         weatherDataEl.querySelector(".temperature").textContent = "";
-        weatherDataEl.querySelector(".description").textContent = "An error happened while retrieving weather data.";
+        weatherDataEl.querySelector(".description").textContent = "An error occurred while retrieving weather data.";
         weatherDataEl.querySelector(".details").innerHTML = "";
     }
 }
